@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Монитор группы</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #eef1f5;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 26px 16px;
+      color: #222;
+    }
+
+    .wrapper {
+      width: 100%;
+      max-width: 440px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+      padding: 18px;
+      margin-bottom: 18px;
+    }
+
+    .card h2 {
+      font-size: 18px;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .subtext {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 14px;
+    }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .status-btn {
+      border: none;
+      border-radius: 6px;
+      padding: 12px 10px;
+      font-size: 14px;
+      font-weight: 700;
+      color: white;
+      cursor: pointer;
+      transition: 0.2s ease;
+      box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.12);
+    }
+
+    .status-btn:hover {
+      transform: translateY(-1px);
+      opacity: 0.95;
+    }
+
+    .study {
+      background: #21b14b;
+    }
+
+    .cafe {
+      background: #f2b705;
+      color: #222;
+    }
+
+    .game {
+      background: #1fb4d4;
+    }
+
+    .home {
+      background: #707b86;
+    }
+
+    .list {
+      margin-top: 10px;
+    }
+
+    .user-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid #ececec;
+    }
+
+    .user-item:last-child {
+      border-bottom: none;
+    }
+
+    .status-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .user-name {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .user-status {
+      font-size: 13px;
+      color: #777;
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        padding: 16px;
+      }
+
+      .status-btn {
+        padding: 11px 8px;
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="card">
+      <h2>Мой профиль</h2>
+      <div class="subtext" id="myInfo">Вы зашли как: ...</div>
+
+      <div class="status-grid">
+        <button class="status-btn study" onclick="changeStatus('Учусь', '#21b14b')">
+          📚 Учусь
+        </button>
+
+        <button class="status-btn cafe" onclick="changeStatus('В столовке', '#f2b705')">
+          ☕ В столовке
+        </button>
+
+        <button class="status-btn game" onclick="changeStatus('Отсутствую', '#1fb4d4')">
+          ❌ Отсутсвую
+        </button>
+
+        <button class="status-btn home" onclick="changeStatus('Дома', '#707b86')">
+          🏠 Дома
+        </button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Монитор группы</h2>
+      <div class="list" id="groupList"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+    const URL = "https://твой-project.supabase.co";
+    const KEY = "твой-anon-key";
+
+    const supabase = createClient(URL, KEY);
+
+    const MY_ID = "твой-id";
+
+    window.changeStatus = async (text, color) => {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ status: text, color: color })
+        .eq("id", MY_ID);
+
+      if (error) {
+        alert("Ошибка! Проверьте RLS политики в Supabase.");
+        console.error(error);
+      } else {
+        fetchGroup();
+      }
+    };
+
+    async function fetchGroup() {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .order("username", { ascending: true });
+
+      if (error) return console.error(error);
+
+      const list = document.getElementById("groupList");
+
+      list.innerHTML = data.map(user => `
+        <div class="user-item">
+          <div class="status-dot" style="background: ${user.color || '#ccc'}"></div>
+          <div style="flex:1">
+            <div class="user-name">${user.username}</div>
+            <div class="user-status">${user.status || 'Статус не задан'}</div>
+          </div>
+        </div>
+      `).join("");
+
+      const me = data.find(u => u.id === MY_ID);
+      if (me) {
+        document.getElementById("myInfo").innerText = `Вы зашли как: ${me.username}`;
+      }
+    }
+
+    fetchGroup();
+    setInterval(fetchGroup, 5000);
+  </script>
+</body>
+</html>
