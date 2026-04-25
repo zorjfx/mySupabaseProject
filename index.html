@@ -167,57 +167,114 @@
   </div>
 
   <script type="module">
-    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+  import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-    const URL = "https://mpmwudnorlysdgnyflrp.supabase.co";
-    const KEY = "sb_publishable_HfwxbHwvxSHEe7xgrtAbsQ_BDChDIde";
+  const URL = "https://mpmwudnorlysdgnyflrp.supabase.co";
+  const KEY = "sb_publishable_HfwxbHwvxSHEe7xgrtAbsQ_BDChDIde";
 
-    const supabase = createClient(URL, KEY);
+  const supabase = createClient(URL, KEY);
 
-    const MY_ID = "08a28fcd-860c-4044-9747-4a920b61a23d";
+  let MY_ID = null;
 
-    window.changeStatus = async (text, color) => {
-      const { error } = await supabase
-        .from("profiles")
-        .update({ status: text, color: color })
-        .eq("id", MY_ID);
-
-      if (error) {
-        alert("Ошибка! Проверьте RLS политики в Supabase.");
-        console.error(error);
-      } else {
-        fetchGroup();
+  window.loginWithGoogle = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: "https://zorjfx.github.io/mySupabaseProject/"
       }
-    };
+    });
 
-    async function fetchGroup() {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .order("username", { ascending: true });
+    if (error) {
+      alert("Ошибка входа через Google");
+      console.error(error);
+    }
+  };
 
-      if (error) return console.error(error);
+  window.logout = async () => {
+    await supabase.auth.signOut();
+    location.reload();
+  };
 
-      const list = document.getElementById("groupList");
+  async function checkUser() {
+    const { data, error } = await supabase.auth.getUser();
 
-      list.innerHTML = data.map(user => `
-        <div class="user-item">
-          <div class="status-dot" style="background: ${user.color || '#ccc'}"></div>
-          <div style="flex:1">
-            <div class="user-name">${user.username}</div>
-            <div class="user-status">${user.status || 'Статус не задан'}</div>
-          </div>
-        </div>
-      `).join("");
-
-      const me = data.find(u => u.id === MY_ID);
-      if (me) {
-        document.getElementById("myInfo").innerText = `Вы зашли как: ${me.username}`;
-      }
+    if (error || !data.user) {
+      document.getElementById("myInfo").innerHTML = `
+        Вы не вошли в аккаунт<br><br>
+        <button onclick="loginWithGoogle()">Войти через Google</button>
+      `;
+      return;
     }
 
+    const user = data.user;
+    MY_ID = user.id;
+
+    const username =
+      user.user_metadata.full_name ||
+      user.user_metadata.name ||
+      user.email;
+
+    await supabase.from("profiles").upsert({
+      id: MY_ID,
+      username: username,
+      avatar_url: user.user_metadata.avatar_url || "avatar_url",
+      status: "Online",
+      color: "#21b14b"
+    });
+
+    document.getElementById("myInfo").innerHTML = `
+      Вы зашли как: ${username}<br><br>
+      <button onclick="logout()">Выйти</button>
+    `;
+
     fetchGroup();
-    setInterval(fetchGroup, 5000);
-  </script>
+  }
+
+  window.changeStatus = async (text, color) => {
+    if (!MY_ID) {
+      alert("Сначала войдите через Google");
+      return;
+    }
+
+    const { error } = await supabase
+      .from("profiles")
+      .update({ status: text, color: color })
+      .eq("id", MY_ID);
+
+    if (error) {
+      alert("Ошибка! Проверьте RLS политики в Supabase.");
+      console.error(error);
+    } else {
+      fetchGroup();
+    }
+  };
+
+  async function fetchGroup() {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("*")
+      .order("username", { ascending: true });
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    const list = document.getElementById("groupList");
+
+    list.innerHTML = data.map(user => `
+      <div class="user-item">
+        <div class="status-dot" style="background: ${user.color || '#ccc'}"></div>
+        <div style="flex:1">
+          <div class="user-name">${user.username}</div>
+          <div class="user-status">${user.status || 'Статус не задан'}</div>
+        </div>
+      </div>
+    `).join("");
+  }
+
+  checkUser();
+  setInterval(fetchGroup, 5000);
+</script>
 </body>
 </html>
