@@ -19,262 +19,607 @@
       display: flex;
       justify-content: center;
       align-items: flex-start;
-      padding: 26px 16px;
-      color: #222;
+      padding: 8px;
+      color: #111;
     }
 
     .wrapper {
       width: 100%;
-      max-width: 440px;
+      max-width: 430px;
     }
 
     .card {
       background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-      padding: 18px;
+      border-radius: 22px;
+      padding: 22px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+    }
+
+    .profile-card {
+      text-align: center;
+    }
+
+    .name {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 22px;
+    }
+
+    .timer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      font-size: 34px;
+      color: #2387ff;
+      font-weight: 800;
+      margin-bottom: 24px;
+    }
+
+    .timer-icon {
+      font-size: 34px;
+    }
+
+    .main-btn {
+      width: 100%;
+      border: none;
+      border-radius: 11px;
+      padding: 16px;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
       margin-bottom: 18px;
     }
 
-    .card h2 {
-      font-size: 18px;
-      margin-bottom: 10px;
-      font-weight: 700;
+    .end-btn {
+      background: #e83249;
+      color: white;
     }
 
-    .subtext {
-      font-size: 14px;
-      color: #555;
-      margin-bottom: 14px;
-    }
-
-    .status-grid {
+    .button-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
     }
 
-    .status-btn {
+    .small-btn {
       border: none;
-      border-radius: 6px;
-      padding: 12px 10px;
-      font-size: 14px;
-      font-weight: 700;
-      color: white;
+      border-radius: 10px;
+      padding: 16px 10px;
+      font-size: 16px;
+      font-weight: 800;
       cursor: pointer;
-      transition: 0.2s ease;
-      box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.12);
     }
 
-    .status-btn:hover {
-      transform: translateY(-1px);
-      opacity: 0.95;
+    .break-btn {
+      background: #ffc107;
+      color: #000;
     }
 
-    .study {
-      background: #21b14b;
+    .exit-btn {
+      background: #737d84;
+      color: white;
     }
 
-    .cafe {
-      background: #f2b705;
-      color: #222;
+    .login-btn {
+      background: #2387ff;
+      color: white;
+      margin-bottom: 0;
     }
 
-    .game {
-      background: #1fb4d4;
-    }
-
-    .home {
-      background: #707b86;
-    }
-
-    .list {
-      margin-top: 10px;
+    .section-title {
+      text-align: center;
+      font-size: 20px;
+      font-weight: 800;
+      margin: 18px 0 32px;
     }
 
     .user-item {
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 12px 0;
-      border-bottom: 1px solid #ececec;
+      padding: 14px 0;
+      border-bottom: 1px solid #eee;
     }
 
     .user-item:last-child {
       border-bottom: none;
     }
 
-    .status-dot {
-      width: 12px;
-      height: 12px;
+    .dot {
+      width: 11px;
+      height: 11px;
       border-radius: 50%;
+      background: #cfcfcf;
       flex-shrink: 0;
-      margin-top: 2px;
+    }
+
+    .user-left {
+      flex: 1;
+      min-width: 0;
     }
 
     .user-name {
-      font-size: 15px;
-      font-weight: 700;
-      margin-bottom: 2px;
+      font-size: 18px;
+      font-weight: 800;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .user-status {
-      font-size: 13px;
-      color: #777;
+    .user-right {
+      text-align: right;
+      font-size: 15px;
+      font-weight: 700;
+      color: #6e7a82;
+    }
+
+    .user-time {
+      font-size: 12px;
+      color: #408cff;
+      margin-top: 3px;
+    }
+
+    .chat-box {
+      height: 230px;
+      border: 1px solid #ececec;
+      border-radius: 8px;
+      padding: 16px;
+      overflow-y: auto;
+      margin-bottom: 14px;
+      font-size: 16px;
+      line-height: 1.35;
+    }
+
+    .message {
+      margin-bottom: 6px;
+    }
+
+    .message strong {
+      font-weight: 800;
+    }
+
+    .chat-form {
+      display: grid;
+      grid-template-columns: 1fr 58px;
+      gap: 8px;
+    }
+
+    .chat-input {
+      width: 100%;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 14px;
+      font-size: 15px;
+      outline: none;
+    }
+
+    .send-btn {
+      border: none;
+      border-radius: 10px;
+      background: #35d083;
+      color: white;
+      font-size: 22px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none;
     }
 
     @media (max-width: 480px) {
       .card {
-        padding: 16px;
+        padding: 20px;
       }
 
-      .status-btn {
-        padding: 11px 8px;
-        font-size: 13px;
+      .name {
+        font-size: 20px;
+      }
+
+      .timer {
+        font-size: 32px;
       }
     }
   </style>
 </head>
+
 <body>
   <div class="wrapper">
-    <div class="card">
-      <h2>Мой профиль</h2>
-      <div class="subtext" id="myInfo">Вы зашли как: ...</div>
 
-      <div class="status-grid">
-        <button class="status-btn study" onclick="changeStatus('Учусь', '#21b14b')">
-          📚 Учусь
+    <div class="card profile-card">
+      <div class="name" id="profileName">Загрузка...</div>
+
+      <div id="loggedContent" class="hidden">
+        <div class="timer">
+          <span class="timer-icon">⏱️</span>
+          <span id="timerText">0 сек.</span>
+        </div>
+
+        <button class="main-btn end-btn" id="finishBtn">
+          ⛔ Завершить сессию
         </button>
 
-        <button class="status-btn cafe" onclick="changeStatus('В столовке', '#f2b705')">
-          ☕ В столовке
-        </button>
+        <div class="button-row">
+          <button class="small-btn break-btn" id="breakBtn">☕ Перерыв</button>
+          <button class="small-btn exit-btn" id="homeBtn">Выход</button>
+        </div>
+      </div>
 
-        <button class="status-btn game" onclick="changeStatus('Отсутствую', '#1fb4d4')">
-          ❌ Отсутсвую
-        </button>
-
-        <button class="status-btn home" onclick="changeStatus('Дома', '#707b86')">
-          🏠 Дома
+      <div id="loginContent" class="hidden">
+        <button class="main-btn login-btn" id="loginBtn">
+          Войти через Google
         </button>
       </div>
     </div>
 
     <div class="card">
-      <h2>Монитор группы</h2>
-      <div class="list" id="groupList"></div>
+      <div class="section-title">👥 Монитор группы</div>
+      <div id="groupList"></div>
     </div>
+
+    <div class="card">
+      <div class="section-title">💬 Общий чат</div>
+
+      <div class="chat-box" id="chatBox"></div>
+
+      <form class="chat-form" id="chatForm">
+        <input
+          class="chat-input"
+          id="messageInput"
+          type="text"
+          placeholder="Сообщение..."
+          autocomplete="off"
+        />
+        <button class="send-btn" type="submit">➤</button>
+      </form>
+    </div>
+
   </div>
 
   <script type="module">
-  import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-  const URL = "https://mpmwudnorlysdgnyflrp.supabase.co";
-  const KEY = "sb_publishable_HfwxbHwvxSHEe7xgrtAbsQ_BDChDIde";
+    const SUPABASE_URL = "https://mpmwudnorlysdgnyflrp.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_HfwxbHwvxSHEe7xgrtAbsQ_BDChDIde";
 
-  const supabase = createClient(URL, KEY);
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  let MY_ID = null;
+    let currentUser = null;
+    let currentProfile = null;
+    let timerInterval = null;
 
-  window.loginWithGoogle = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: "https://zorjfx.github.io/mySupabaseProject/"
+    const profileName = document.getElementById("profileName");
+    const loggedContent = document.getElementById("loggedContent");
+    const loginContent = document.getElementById("loginContent");
+    const timerText = document.getElementById("timerText");
+    const groupList = document.getElementById("groupList");
+    const chatBox = document.getElementById("chatBox");
+    const chatForm = document.getElementById("chatForm");
+    const messageInput = document.getElementById("messageInput");
+
+    document.getElementById("loginBtn").addEventListener("click", loginWithGoogle);
+    document.getElementById("finishBtn").addEventListener("click", finishSession);
+    document.getElementById("breakBtn").addEventListener("click", setBreak);
+    document.getElementById("homeBtn").addEventListener("click", setHome);
+
+    async function loginWithGoogle() {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: "https://zorjfx.github.io/mySupabaseProject/"
+        }
+      });
+
+      if (error) {
+        alert("Ошибка входа через Google");
+        console.error(error);
       }
-    });
-
-    if (error) {
-      alert("Ошибка входа через Google");
-      console.error(error);
-    }
-  };
-
-  window.logout = async () => {
-    await supabase.auth.signOut();
-    location.reload();
-  };
-
-  async function checkUser() {
-    const { data, error } = await supabase.auth.getUser();
-
-    if (error || !data.user) {
-      document.getElementById("myInfo").innerHTML = `
-        Вы не вошли в аккаунт<br><br>
-        <button onclick="loginWithGoogle()">Войти через Google</button>
-      `;
-      return;
     }
 
-    const user = data.user;
-    MY_ID = user.id;
-
-    const username =
-      user.user_metadata.full_name ||
-      user.user_metadata.name ||
-      user.email;
-
-    await supabase.from("profiles").upsert({
-      id: MY_ID,
-      username: username,
-      avatar_url: user.user_metadata.avatar_url || "avatar_url",
-      status: "Online",
-      color: "#21b14b"
-    });
-
-    document.getElementById("myInfo").innerHTML = `
-      Вы зашли как: ${username}<br><br>
-      <button onclick="logout()">Выйти</button>
-    `;
-
-    fetchGroup();
-  }
-
-  window.changeStatus = async (text, color) => {
-    if (!MY_ID) {
-      alert("Сначала войдите через Google");
-      return;
+    async function logout() {
+      await supabase.auth.signOut();
+      location.reload();
     }
 
-    const { error } = await supabase
-      .from("profiles")
-      .update({ status: text, color: color })
-      .eq("id", MY_ID);
+    async function init() {
+      const { data, error } = await supabase.auth.getUser();
 
-    if (error) {
-      alert("Ошибка! Проверьте RLS политики в Supabase.");
-      console.error(error);
-    } else {
-      fetchGroup();
+      if (error || !data.user) {
+        showLoggedOut();
+        return;
+      }
+
+      currentUser = data.user;
+
+      const username =
+        currentUser.user_metadata.full_name ||
+        currentUser.user_metadata.name ||
+        currentUser.email;
+
+      const avatarUrl =
+        currentUser.user_metadata.avatar_url ||
+        "avatar_url";
+
+      const { error: upsertError } = await supabase.from("profiles").upsert({
+        id: currentUser.id,
+        username: username,
+        avatar_url: avatarUrl,
+        status: "Дома",
+        color: "#cfcfcf",
+        session_started_at: new Date().toISOString(),
+        status_updated_at: new Date().toISOString()
+      }, {
+        onConflict: "id"
+      });
+
+      if (upsertError) {
+        alert("Ошибка создания профиля.Проверь RLS policies в profiles.");
+        console.error(upsertError);
+        return;
+      }
+
+      await loadMyProfile();
+      showLoggedIn();
+      await loadGroup();
+      await loadMessages();
+
+      subscribeToProfiles();
+      subscribeToMessages();
+
+      startTimer();
+      setInterval(loadGroup, 5000);
     }
-  };
 
-  async function fetchGroup() {
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("*")
-      .order("username", { ascending: true });
-
-    if (error) {
-      console.error(error);
-      return;
+    function showLoggedOut() {
+      profileName.textContent = "Вы не вошли";
+      loggedContent.classList.add("hidden");
+      loginContent.classList.remove("hidden");
     }
 
-    const list = document.getElementById("groupList");
+    function showLoggedIn() {
+      profileName.textContent = currentProfile.username;
+      loggedContent.classList.remove("hidden");
+      loginContent.classList.add("hidden");
+    }
 
-    list.innerHTML = data.map(user => `
-      <div class="user-item">
-        <div class="status-dot" style="background: ${user.color || '#ccc'}"></div>
-        <div style="flex:1">
-          <div class="user-name">${user.username}</div>
-          <div class="user-status">${user.status || 'Статус не задан'}</div>
+    async function loadMyProfile() {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", currentUser.id)
+        .single();
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      currentProfile = data;
+    }
+
+    async function updateStatus(status, color) {
+      if (!currentUser) {
+        alert("Сначала войдите через Google");
+        return;
+      }
+
+      const { error } = await supabase
+        .from("profiles")
+        .update({
+          status: status,
+          color: color,
+          status_updated_at: new Date().toISOString()
+        })
+        .eq("id", currentUser.id);
+
+      if (error) {
+        alert("Ошибка обновления статуса.Проверь RLS policies.");
+        console.error(error);
+        return;
+      }
+
+      await loadMyProfile();
+      await loadGroup();
+    }
+
+    async function finishSession() {
+      await updateStatus("Отсутствую", "#cfcfcf");
+
+      await supabase
+        .from("profiles")
+        .update({
+          session_started_at: null
+        })
+        .eq("id", currentUser.id);
+
+      await logout();
+    }
+
+    async function setBreak() {
+      await updateStatus("Перерыв", "#ffc107");
+    }
+
+    async function setHome() {
+      await updateStatus("Дома", "#cfcfcf");
+    }
+
+    function startTimer() {
+      if (timerInterval) clearInterval(timerInterval);
+
+      timerInterval = setInterval(() => {
+        if (!currentProfile || !currentProfile.session_started_at) {
+          timerText.textContent = "0 сек.";
+          return;
+        }
+
+        const start = new Date(currentProfile.session_started_at).getTime();
+        const now = Date.now();
+        const diffSeconds = Math.max(0, Math.floor((now - start) / 1000));
+
+        timerText.textContent = formatTime(diffSeconds);
+      }, 1000);
+    }
+
+    function formatTime(totalSeconds) {
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+
+      if (hours > 0) {
+        return `${hours}ч ${minutes}м ${seconds}с`;
+      }
+
+      if (minutes > 0) {
+        return `${minutes}м ${seconds}с`;
+      }
+
+      return `${seconds} сек.`;
+    }
+
+    function formatSmallTime(dateString) {
+      if (!dateString) return "0ч 0м 0с";
+
+      const start = new Date(dateString).getTime();
+      const now = Date.now();
+      const diffSeconds = Math.max(0, Math.floor((now - start) / 1000));
+
+      const hours = Math.floor(diffSeconds / 3600);
+      const minutes = Math.floor((diffSeconds % 3600) / 60);
+      const seconds = diffSeconds % 60;
+
+      return `${hours}ч ${minutes}м ${seconds}с`;
+    }
+
+    function statusIcon(status) {
+      if (status === "Дома") return "🏠";
+      if (status === "Перерыв") return "☕";
+      if (status === "Учусь") return "📚";
+      if (status === "Отсутствую") return "⛔";
+      if (status === "Online") return "🟢";
+      if (status === "Offline") return "⚫";
+      if (status === "Studying") return "📚";
+      return "🏠";
+    }
+
+    async function loadGroup() {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .order("username", { ascending: true });
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      groupList.innerHTML = data.map(user => `
+        <div class="user-item">
+          <div class="dot" style="background:${user.color || "#cfcfcf"}"></div>
+
+          <div class="user-left">
+            <div class="user-name">${escapeHtml(user.username || "Без имени")}</div>
+          </div>
+
+          <div class="user-right">
+            <div>${statusIcon(user.status)} ${escapeHtml(user.status || "Дома")}</div>
+            <div class="user-time">↻ ${formatSmallTime(user.status_updated_at)}</div>
+          </div>
         </div>
-      </div>
-    `).join("");
-  }
+      `).join("");
+    }
 
-  checkUser();
-  setInterval(fetchGroup, 5000);
-</script>
+    chatForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const text = messageInput.value.trim();
+
+      if (!text || !currentUser || !currentProfile) return;
+
+      const { error } = await supabase.from("messages").insert({
+        user_id: currentUser.id,
+        username: currentProfile.username,
+        text: text
+      });
+
+      if (error) {
+        alert("Сообщение не отправлено.Проверь RLS policies для messages.");
+        console.error(error);
+        return;
+      }
+
+      messageInput.value = "";
+      await loadMessages();
+    });
+
+    async function loadMessages() {
+      const { data, error } = await supabase
+        .from("messages")
+        .select("*")
+        .order("created_at", { ascending: true })
+        .limit(50);
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      chatBox.innerHTML = data.map(message => `
+        <div class="message">
+          <strong>${escapeHtml(message.username)}:</strong>
+          ${escapeHtml(message.text)}
+        </div>
+      `).join("");
+
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function subscribeToProfiles() {
+      supabase
+        .channel("profiles-changes")
+        .on(
+          "postgres_changes",
+          {
+            event: "*",
+            schema: "public",
+            table: "profiles"
+          },
+          async () => {
+            await loadMyProfile();
+            await loadGroup();
+          }
+        )
+        .subscribe();
+    }
+
+    function subscribeToMessages() {
+      supabase
+        .channel("messages-changes")
+        .on(
+          "postgres_changes",
+          {
+            event: "INSERT",
+            schema: "public",
+            table: "messages"
+          },
+          async () => {
+            await loadMessages();
+          }
+        )
+        .subscribe();
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    init();
+  </script>
 </body>
 </html>
