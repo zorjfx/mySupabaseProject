@@ -177,6 +177,11 @@
       height: 9px;
       border-radius: 50%;
       background: #35cdb2;
+      flex-shrink: 0;
+    }
+
+    .status-colored {
+      font-weight: 900;
     }
 
     .badges {
@@ -238,7 +243,8 @@
     .status-btn.active {
       border-color: #6f63ff;
       background: #f5f3ff;
-      box-shadow: 0 0 0 2px rgba(111,99,255,0.12);
+      box-shadow: 0 0 0 2px rgba(111,99,255,0.18);
+      color: #1d2230;
     }
 
     .group-list,.ranking-list {
@@ -448,7 +454,7 @@
           <div>
             <div class="profile-name" id="profileName">...</div>
             <div class="online">
-              <span class="dot"></span>
+              <span class="dot" id="profileDot"></span>
               <span id="profileStatus">В сети</span>
             </div>
             <div class="badges" id="profileBadges"></div>
@@ -476,10 +482,10 @@
       </div>
 
       <div class="status-grid">
-        <button class="status-btn active" onclick="setStatus('В сети','#35cdb2')">🟢 В сети</button>
-        <button class="status-btn" onclick="setStatus('Отошёл','#ffb020')">🟡 Отошёл</button>
-        <button class="status-btn" onclick="setStatus('Занят','#ff5d63')">🔴 Занят</button>
-        <button class="status-btn" onclick="setStatus('Не беспокоить','#858ba3')">⚫ Не беспокоить</button>
+        <button class="status-btn" data-status="В сети" onclick="setStatus('В сети','#35cdb2')">🟢 В сети</button>
+        <button class="status-btn" data-status="Отошёл" onclick="setStatus('Отошёл','#ffb020')">🟡 Отошёл</button>
+        <button class="status-btn" data-status="Занят" onclick="setStatus('Занят','#ff5d63')">🔴 Занят</button>
+        <button class="status-btn" data-status="Не беспокоить" onclick="setStatus('Не беспокоить','#111111')">⚫ Не беспокоить</button>
       </div>
 
       <div class="card">
@@ -545,6 +551,7 @@
 
     const profileName = document.getElementById("profileName");
     const profileStatus = document.getElementById("profileStatus");
+    const profileDot = document.getElementById("profileDot");
     const profileBadges = document.getElementById("profileBadges");
     const avatarBox = document.getElementById("avatarBox");
 
@@ -685,10 +692,30 @@
     function renderProfile() {
       if (!currentProfile) return;
 
+      const status = currentProfile.status || "В сети";
+      const color = currentProfile.color || "#35cdb2";
+
       sessionName.textContent = currentProfile.username || "Без имени";
       profileName.textContent = currentProfile.username || "Без имени";
-      profileStatus.textContent = currentProfile.status || "В сети";
-      sessionStatus.textContent = currentProfile.status || "В сети";
+
+      profileStatus.textContent = status;
+      profileStatus.style.color = color;
+      profileStatus.classList.add("status-colored");
+
+      sessionStatus.textContent = status;
+      sessionStatus.style.color = color;
+
+      if (profileDot) {
+        profileDot.style.background = color;
+      }
+
+      document.querySelectorAll(".status-btn").forEach(button => {
+        button.classList.remove("active");
+
+        if (button.dataset.status === status) {
+          button.classList.add("active");
+        }
+      });
 
       if (currentProfile.avatar_url && currentProfile.avatar_url.startsWith("http")) {
         avatarBox.innerHTML = `<img src="${escapeHtml(currentProfile.avatar_url)}" alt="avatar">`;
@@ -705,13 +732,30 @@
       const unlocked = allAchievements.filter(item => unlockedIds.includes(item.id));
 
       profileBadges.innerHTML = unlocked.slice(0,3).map(item => `
-        <span class="badge">${escapeHtml(item.emoji)} ${escapeHtml(item.title)}</span>
+        <span class="badge">${escapeHtml(item.emoji || "🏅")} ${escapeHtml(item.title || "Достижение")}</span>
       `).join("");
 
       renderAchievements();
     }
 
     async function setStatus(status,color) {
+      document.querySelectorAll(".status-btn").forEach(button => {
+        button.classList.remove("active");
+
+        if (button.dataset.status === status) {
+          button.classList.add("active");
+        }
+      });
+
+      profileStatus.textContent = status;
+      profileStatus.style.color = color;
+      sessionStatus.textContent = status;
+      sessionStatus.style.color = color;
+
+      if (profileDot) {
+        profileDot.style.background = color;
+      }
+
       const { error } = await supabase
         .from("profiles")
         .update({
@@ -782,6 +826,7 @@
       }
 
       await unlockAchievementIfNeeded("first_session");
+
       if (sessionSeconds >= 7200) {
         await unlockAchievementIfNeeded("marathoner");
       }
@@ -831,7 +876,12 @@
           <div class="dot" style="background:${user.color || "#35cdb2"}"></div>
           <div class="user-main">
             <div class="user-title">${escapeHtml(user.username || "Без имени")}</div>
-            <div class="user-sub">${escapeHtml(user.status || "В сети")} • ${formatShortTime(user.total_study_seconds || 0)}</div>
+            <div class="user-sub">
+              <span style="color:${user.color || "#35cdb2"};font-weight:900;">
+                ${escapeHtml(user.status || "В сети")}
+              </span>
+              • ${formatShortTime(user.total_study_seconds || 0)}
+            </div>
           </div>
           <div class="user-sub">${user.sessions_count || 0} сесс.</div>
         </div>
@@ -870,9 +920,9 @@
 
         return `
           <div class="achievement ${unlocked ? "" : "locked"}">
-            <div class="ach-emoji">${escapeHtml(item.emoji)}</div>
-            <div class="ach-title">${escapeHtml(item.title)}</div>
-            <div class="ach-desc">${escapeHtml(item.description)}</div>
+            <div class="ach-emoji">${escapeHtml(item.emoji || "🏅")}</div>
+            <div class="ach-title">${escapeHtml(item.title || "Достижение")}</div>
+            <div class="ach-desc">${escapeHtml(item.description || "Описание не добавлено")}</div>
             <span class="rarity">${unlocked ? escapeHtml(item.rarity || "common") : "закрыто"}</span>
           </div>
         `;
