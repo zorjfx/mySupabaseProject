@@ -225,6 +225,37 @@
       margin-top: 2px;
     }
 
+    .goal-box {
+      margin-top: 16px;
+      background: #f8f9fd;
+      border: 1px solid #e4e7f0;
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .goal-row {
+      display: grid;
+      grid-template-columns: 1fr 90px;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .progress {
+      width: 100%;
+      height: 10px;
+      border-radius: 999px;
+      background: #e8ebf2;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: #6f63ff;
+      border-radius: 999px;
+    }
+
     .status-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -247,13 +278,13 @@
       color: #1d2230;
     }
 
-    .group-list,.ranking-list {
+    .group-list,.ranking-list,.notes-list,.help-list {
       display: flex;
       flex-direction: column;
       gap: 9px;
     }
 
-    .user-item,.rank-item {
+    .user-item,.rank-item,.note-item,.help-item {
       display: flex;
       align-items: center;
       gap: 10px;
@@ -263,12 +294,16 @@
       padding: 12px;
     }
 
+    .note-item,.help-item {
+      display: block;
+    }
+
     .user-main,.rank-main {
       flex: 1;
       min-width: 0;
     }
 
-    .user-title,.rank-title {
+    .user-title,.rank-title,.note-title,.help-title {
       font-size: 16px;
       font-weight: 900;
       white-space: nowrap;
@@ -276,7 +311,7 @@
       text-overflow: ellipsis;
     }
 
-    .user-sub,.rank-sub {
+    .user-sub,.rank-sub,.note-sub,.help-sub {
       font-size: 12px;
       color: #747b91;
       font-weight: 700;
@@ -382,17 +417,29 @@
     }
 
     .message {
-      margin-bottom: 7px;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #eceff6;
     }
 
     .message strong {
       font-weight: 900;
     }
 
-    .chat-form {
+    .like-btn {
+      margin-top: 5px;
+      padding: 5px 8px;
+      font-size: 12px;
+      background: #eefbf8;
+      color: #169a82;
+      border: 1px solid #bceee4;
+    }
+
+    .chat-form,.note-form,.help-form {
       display: grid;
       grid-template-columns: 1fr 56px;
       gap: 8px;
+      margin-top: 10px;
     }
 
     input {
@@ -402,6 +449,7 @@
       padding: 14px;
       outline: none;
       font-size: 15px;
+      width: 100%;
     }
 
     .send-btn {
@@ -479,6 +527,19 @@
             <div class="stat-label">Достиж.</div>
           </div>
         </div>
+
+        <div class="goal-box">
+          <div class="small-title">Цель учёбы</div>
+          <div id="goalText">0с / 0с</div>
+          <div class="progress">
+            <div class="progress-fill" id="goalProgress"></div>
+          </div>
+
+          <div class="goal-row">
+            <input id="goalInput" type="number" min="1" placeholder="Минуты цели" />
+            <button class="btn-blue" id="saveGoalBtn">OK</button>
+          </div>
+        </div>
       </div>
 
       <div class="status-grid">
@@ -512,6 +573,26 @@
       </div>
 
       <div class="card">
+        <div class="small-title">Заметки учёбы</div>
+        <div class="notes-list" id="notesList"></div>
+
+        <form class="note-form" id="noteForm">
+          <input id="noteInput" placeholder="Например: учу SQL..." autocomplete="off" />
+          <button class="send-btn" type="submit">+</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="small-title">Помощь группе</div>
+        <div class="help-list" id="helpList"></div>
+
+        <form class="help-form" id="helpForm">
+          <input id="helpInput" placeholder="С чем нужна помощь?" autocomplete="off" />
+          <button class="send-btn" type="submit">?</button>
+        </form>
+      </div>
+
+      <div class="card">
         <div class="small-title">Общий чат</div>
 
         <div class="chat-box" id="chatBox"></div>
@@ -536,6 +617,7 @@
     let currentProfile = null;
     let myAchievements = [];
     let allAchievements = [];
+    let myLikes = [];
     let timerInterval = null;
 
     const loginCard = document.getElementById("loginCard");
@@ -544,6 +626,7 @@
     const logoutBtn = document.getElementById("logoutBtn");
     const continueBtn = document.getElementById("continueBtn");
     const finishBtn = document.getElementById("finishBtn");
+    const saveGoalBtn = document.getElementById("saveGoalBtn");
 
     const sessionName = document.getElementById("sessionName");
     const timerText = document.getElementById("timerText");
@@ -560,6 +643,10 @@
     const statMessages = document.getElementById("statMessages");
     const statAchievements = document.getElementById("statAchievements");
 
+    const goalText = document.getElementById("goalText");
+    const goalProgress = document.getElementById("goalProgress");
+    const goalInput = document.getElementById("goalInput");
+
     const groupList = document.getElementById("groupList");
     const rankingList = document.getElementById("rankingList");
     const achievementsList = document.getElementById("achievementsList");
@@ -568,10 +655,19 @@
     const chatForm = document.getElementById("chatForm");
     const messageInput = document.getElementById("messageInput");
 
+    const noteForm = document.getElementById("noteForm");
+    const noteInput = document.getElementById("noteInput");
+    const notesList = document.getElementById("notesList");
+
+    const helpForm = document.getElementById("helpForm");
+    const helpInput = document.getElementById("helpInput");
+    const helpList = document.getElementById("helpList");
+
     loginBtn.addEventListener("click",loginWithGoogle);
     logoutBtn.addEventListener("click",logout);
     continueBtn.addEventListener("click",startSession);
     finishBtn.addEventListener("click",finishSession);
+    saveGoalBtn.addEventListener("click",saveDailyGoal);
 
     async function loginWithGoogle() {
       const { error } = await supabase.auth.signInWithOAuth({
@@ -642,9 +738,12 @@
     async function loadEverything() {
       await loadMyProfile();
       await loadAchievements();
+      await loadMyLikes();
       await loadGroup();
       await loadRanking();
       await loadMessages();
+      await loadStudyNotes();
+      await loadHelpRequests();
       renderProfile();
     }
 
@@ -689,6 +788,20 @@
       myAchievements = unlockedData || [];
     }
 
+    async function loadMyLikes() {
+      const { data,error } = await supabase
+        .from("message_likes")
+        .select("*")
+        .eq("user_id",currentUser.id);
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      myLikes = data || [];
+    }
+
     function renderProfile() {
       if (!currentProfile) return;
 
@@ -727,6 +840,13 @@
       statSessions.textContent = currentProfile.sessions_count || 0;
       statMessages.textContent = currentProfile.messages_count || 0;
       statAchievements.textContent = myAchievements.length;
+
+      const goal = Number(currentProfile.daily_goal_seconds || 7200);
+      const studied = Number(currentProfile.total_study_seconds || 0);
+      const percent = Math.min(100,Math.round((studied / goal) * 100));
+
+      goalText.textContent = `${formatShortTime(studied)} / ${formatShortTime(goal)} (${percent}%)`;
+      goalProgress.style.width = `${percent}%`;
 
       const unlockedIds = myAchievements.map(item => item.achievement_id);
       const unlocked = allAchievements.filter(item => unlockedIds.includes(item.id));
@@ -775,6 +895,33 @@
     }
 
     window.setStatus = setStatus;
+
+    async function saveDailyGoal() {
+      const minutes = Number(goalInput.value);
+
+      if (!minutes || minutes <= 0) {
+        alert("Введи цель в минутах.");
+        return;
+      }
+
+      const seconds = minutes * 60;
+
+      const { error } = await supabase
+        .from("profiles")
+        .update({
+          daily_goal_seconds: seconds
+        })
+        .eq("id",currentUser.id);
+
+      if (error) {
+        alert("Цель не сохранилась.Проверь profiles RLS.");
+        console.error(error);
+        return;
+      }
+
+      goalInput.value = "";
+      await loadEverything();
+    }
 
     async function startSession() {
       const { error } = await supabase
@@ -938,7 +1085,8 @@
       const { error } = await supabase.from("messages").insert({
         user_id: currentUser.id,
         username: currentProfile.username,
-        text: text
+        text: text,
+        likes_count: 0
       });
 
       if (error) {
@@ -976,15 +1124,194 @@
         return;
       }
 
-      chatBox.innerHTML = data.map(message => `
-        <div class="message">
-          <strong>${escapeHtml(message.username)}:</strong>
-          ${escapeHtml(message.text)}
-        </div>
-      `).join("");
+      chatBox.innerHTML = data.map(message => {
+        const liked = myLikes.some(like => Number(like.message_id) === Number(message.id));
+
+        return `
+          <div class="message">
+            <div>
+              <strong>${escapeHtml(message.username)}:</strong>
+              ${escapeHtml(message.text)}
+            </div>
+            <button class="like-btn" onclick="toggleMessageLike(${message.id},${message.likes_count || 0})">
+              ${liked ? "💚" : "👍"} ${message.likes_count || 0}
+            </button>
+          </div>
+        `;
+      }).join("");
 
       chatBox.scrollTop = chatBox.scrollHeight;
     }
+
+    async function toggleMessageLike(messageId,currentLikes) {
+      const existingLike = myLikes.find(like => Number(like.message_id) === Number(messageId));
+
+      if (existingLike) {
+        const { error: deleteError } = await supabase
+          .from("message_likes")
+          .delete()
+          .eq("id",existingLike.id);
+
+        if (deleteError) {
+          alert("Лайк не удалился.");
+          console.error(deleteError);
+          return;
+        }
+
+        await supabase
+          .from("messages")
+          .update({
+            likes_count: Math.max(0,Number(currentLikes) - 1)
+          })
+          .eq("id",messageId);
+      } else {
+        const { error: insertError } = await supabase
+          .from("message_likes")
+          .insert({
+            message_id: messageId,
+            user_id: currentUser.id
+          });
+
+        if (insertError) {
+          alert("Лайк не поставился.");
+          console.error(insertError);
+          return;
+        }
+
+        await supabase
+          .from("messages")
+          .update({
+            likes_count: Number(currentLikes) + 1
+          })
+          .eq("id",messageId);
+      }
+
+      await loadEverything();
+    }
+
+    window.toggleMessageLike = toggleMessageLike;
+
+    noteForm.addEventListener("submit",async event => {
+      event.preventDefault();
+
+      const note = noteInput.value.trim();
+      if (!note) return;
+
+      await createStudyNote(note);
+    });
+
+    async function createStudyNote(note) {
+      const { error } = await supabase
+        .from("study_notes")
+        .insert({
+          user_id: currentUser.id,
+          username: currentProfile.username,
+          note: note
+        });
+
+      if (error) {
+        alert("Заметка не сохранилась.Проверь study_notes RLS.");
+        console.error(error);
+        return;
+      }
+
+      noteInput.value = "";
+      await loadStudyNotes();
+    }
+
+    async function loadStudyNotes() {
+      const { data,error } = await supabase
+        .from("study_notes")
+        .select("*")
+        .order("created_at",{ ascending: false })
+        .limit(5);
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      notesList.innerHTML = data.map(item => `
+        <div class="note-item">
+          <div class="note-title">${escapeHtml(item.username)}</div>
+          <div class="note-sub">${escapeHtml(item.note)}</div>
+        </div>
+      `).join("");
+    }
+
+    helpForm.addEventListener("submit",async event => {
+      event.preventDefault();
+
+      const question = helpInput.value.trim();
+      if (!question) return;
+
+      await createHelpRequest(question);
+    });
+
+    async function createHelpRequest(question) {
+      const { error } = await supabase
+        .from("help_requests")
+        .insert({
+          user_id: currentUser.id,
+          username: currentProfile.username,
+          question: question,
+          is_resolved: false
+        });
+
+      if (error) {
+        alert("Запрос помощи не сохранился.Проверь help_requests RLS.");
+        console.error(error);
+        return;
+      }
+
+      helpInput.value = "";
+      await loadHelpRequests();
+    }
+
+    async function loadHelpRequests() {
+      const { data,error } = await supabase
+        .from("help_requests")
+        .select("*")
+        .eq("is_resolved",false)
+        .order("created_at",{ ascending: false })
+        .limit(5);
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      helpList.innerHTML = data.map(item => `
+        <div class="help-item">
+          <div class="help-title">🆘 ${escapeHtml(item.username)}</div>
+          <div class="help-sub">${escapeHtml(item.question)}</div>
+          ${
+            item.user_id === currentUser.id
+              ? `<button class="like-btn" onclick="resolveHelpRequest(${item.id})">Закрыть</button>`
+              : ""
+          }
+        </div>
+      `).join("");
+    }
+
+    async function resolveHelpRequest(id) {
+      const { error } = await supabase
+        .from("help_requests")
+        .update({
+          is_resolved: true
+        })
+        .eq("id",id);
+
+      if (error) {
+        alert("Не удалось закрыть запрос.");
+        console.error(error);
+        return;
+      }
+
+      await loadHelpRequests();
+    }
+
+    window.resolveHelpRequest = resolveHelpRequest;
 
     function startTimer() {
       if (timerInterval) clearInterval(timerInterval);
@@ -1034,6 +1361,8 @@
         .on("postgres_changes",{ event: "*",schema: "public",table: "profiles" },loadEverything)
         .on("postgres_changes",{ event: "*",schema: "public",table: "messages" },loadEverything)
         .on("postgres_changes",{ event: "*",schema: "public",table: "user_achievements" },loadEverything)
+        .on("postgres_changes",{ event: "*",schema: "public",table: "study_notes" },loadEverything)
+        .on("postgres_changes",{ event: "*",schema: "public",table: "help_requests" },loadEverything)
         .subscribe();
     }
 
